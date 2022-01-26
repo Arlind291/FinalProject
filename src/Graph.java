@@ -14,7 +14,7 @@ public class Graph extends JPanel {
         super.paintComponent(g);
         for (int i = 0; i < nums.size(); i++) {
             g.setColor(new Color(155,17,30));
-            g.fillRect(10 + 15 * (i) + 2 * (i), 500 - nums.get(i), 16, nums.get(i));
+            g.fillRect(+ 15 * (i) + 1 * (i), 480 - nums.get(i), 15, nums.get(i));
         }
     }
 

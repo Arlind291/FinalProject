@@ -1,10 +1,12 @@
 import java.awt.event.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.ServiceLoader;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class GUI extends JFrame implements ActionListener {
-
+public class GUI extends JFrame implements ActionListener /*ChangeListener*/ {
     //Combo Box
     JComboBox comboBox;
 
@@ -31,9 +33,11 @@ public class GUI extends JFrame implements ActionListener {
     QuickSort quick = new QuickSort();
     Graph graph = new Graph(array);
 
+
     //JButtons
     JButton start;
     JButton refresh;
+    JButton enter;
 
     // Elapsed time / Runtime
     JLabel elapsedTime;
@@ -42,14 +46,13 @@ public class GUI extends JFrame implements ActionListener {
     // Boolean value for refresh check
     boolean needRefresh = false;
 
-    GUI(){
+    GUI() {
         // Frame Name / Icon / Size / Exit
         this.setTitle("Sorting Algorithms Visualizer");
-        this.setSize(885, 622);
+        this.setSize(1000, 650);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(true);
         this.setIconImage(icon.getImage());
-
 
         //Menu Bar
         menuBar = new JMenuBar();
@@ -58,13 +61,13 @@ public class GUI extends JFrame implements ActionListener {
 
         // Title
         label = new JLabel("Sorting Algorithms Visualizer");
-        label.setBounds(235,0,400,60);
+        label.setBounds(235, 0, 400, 60);
         label.setFont(new Font("Arial Rounded MT Bolt", Font.BOLD, 26));
         label.setForeground(Color.white);
 
         // Runtime label
         runtimeLabel = new JLabel("Runtime: ");
-        runtimeLabel.setBounds(10,10,200,30);
+        runtimeLabel.setBounds(10, 10, 200, 30);
         runtimeLabel.setFont(new Font("Arial Rounded MT Bolt", Font.BOLD, 15));
         runtimeLabel.setForeground(Color.white);
 
@@ -77,23 +80,23 @@ public class GUI extends JFrame implements ActionListener {
         // Combo Box
         String[] algorithms = {"Select Algorithm", "Bubble Sort", "Selection Sort", "Insertion Sort", "Quick Sort", "Merge Sort"};
         comboBox = new JComboBox(algorithms);
-        comboBox.setBounds(330,70,155,30);
+        comboBox.setBounds(330, 70, 155, 30);
         comboBox.addActionListener(this);
 
         // Start Button / Refresh Button
         start = new JButton("Start");
-        start.setBounds(670, 30, 140,30);
+        start.setBounds(670, 30, 140, 30);
         start.setFocusable(false);
         start.addActionListener(this);
 
         refresh = new JButton("Refresh");
-        refresh.setBounds(670, 62, 140, 30);
+        refresh.setBounds(815, 30, 140, 30);
         refresh.setFocusable(false);
         refresh.addActionListener(this);
 
         // Align panels
-        UpPanel.setBounds(0,0,870,100);
-        graph.setBounds(0,100,870,522);
+        UpPanel.setBounds(0, 0, 870, 100);
+        graph.setBounds(0, 105, 900, 500);
 
         // Background colours
         UpPanel.setBackground(Color.black);
@@ -106,6 +109,8 @@ public class GUI extends JFrame implements ActionListener {
         UpPanel.add(start);
         UpPanel.add(refresh);
         UpPanel.add(elapsedTime);
+        UpPanel.add(newArray.input);
+        UpPanel.add(newArray.enter);
         UpPanel.setLayout(new BorderLayout());
 
         // Add MenuBar
@@ -113,6 +118,7 @@ public class GUI extends JFrame implements ActionListener {
         fileMenu.add(saveItem);
         menuBar.add(fileMenu);
 
+        this.setLayout(new BorderLayout());
         this.setJMenuBar(menuBar);
         this.add(graph);
         this.add(UpPanel);
@@ -128,7 +134,7 @@ public class GUI extends JFrame implements ActionListener {
         double time;
 
         // Check status before pressing start button
-        if (e.getSource()==start & comboBox.getSelectedItem() != "Select Algorithm" & !needRefresh) {
+        if (e.getSource() == start & comboBox.getSelectedItem() != "Select Algorithm" & !needRefresh) {
             //Bubble Sort
             if (selected.equals("Bubble")) {
                 startTime = System.currentTimeMillis();
@@ -166,7 +172,7 @@ public class GUI extends JFrame implements ActionListener {
                 elapsedTime.setText("Elapsed Time: " + time + "s");
                 JOptionPane.showMessageDialog(null, "Sorting finished!", "Selection Sort", JOptionPane.INFORMATION_MESSAGE);
 
-              //Insertion Sort
+                //Insertion Sort
             } else if (selected == "Insertion") {
                 startTime = System.currentTimeMillis();
                 System.out.println("Insertion Sort Selected");
@@ -184,7 +190,7 @@ public class GUI extends JFrame implements ActionListener {
                 elapsedTime.setText("Elapsed Time: " + time + "s");
                 JOptionPane.showMessageDialog(null, "Sorting finished!", "Insertion Sort", JOptionPane.INFORMATION_MESSAGE);
 
-              //Quick Sort
+                //Quick Sort
             } else if (selected == "Quick") {
                 startTime = System.currentTimeMillis();
                 System.out.println("Quick Sort Selected");
@@ -203,22 +209,19 @@ public class GUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Sorting finished!", "Quick Sort", JOptionPane.INFORMATION_MESSAGE);
             }
         }
-
         //Refresh button status
-        if (e.getSource()==refresh) {
+        if (e.getSource() == refresh) {
             array = newArray.createArray();
             graph.updateArray(array);
             graph.repaint();
             needRefresh = false;
         }
-
         //Combobox
         if (e.getSource() == comboBox) {
             if (comboBox.getSelectedItem() == "Bubble Sort") {
                 selected = "Bubble";
                 runtimeLabel.setText("Runtime: O(N^2)");
-            }
-            else if (comboBox.getSelectedItem() == "Selection Sort") {
+            } else if (comboBox.getSelectedItem() == "Selection Sort") {
                 selected = "Selection";
                 runtimeLabel.setText("Runtime: O(N^2)");
 
