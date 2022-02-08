@@ -1,67 +1,67 @@
 import java.awt.event.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.ServiceLoader;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-public class GUI extends JFrame implements ActionListener /*ChangeListener*/ {
-    //Combo Box
-    JComboBox comboBox;
+/**
+ * class GUI: all the functions of the GUI frame and design
+ * @author Arlind, Xhuljo
+ * */
+class GUI extends JFrame implements ActionListener {
 
     //Labels
     JLabel label;
     JPanel UpPanel = new JPanel();
 
-    String selected = "";
-
     //ImageIcon
     ImageIcon icon = new ImageIcon("src/logo/logo.png");
 
+    //Combo Box
+    JComboBox comboBox;
+
     //MenuBar
     JMenuBar menuBar;
-    JMenu fileMenu;
     JMenuItem saveItem;
 
     //Class Objects
     ArrayNums newArray = new ArrayNums();
     ArrayList<Integer> array = newArray.createArray();
     BubbleSort bubble = new BubbleSort();
+    BogoSort bogoSort = new BogoSort();
+    QuickSort quickSort = new QuickSort();
     SelectionSort selection = new SelectionSort();
     InsertionSort insertion = new InsertionSort();
-    QuickSort quick = new QuickSort();
     Graph graph = new Graph(array);
-
 
     //JButtons
     JButton start;
     JButton refresh;
-    JButton enter;
 
-    // Elapsed time / Runtime
+    //Elapsed time / Runtime label
     JLabel elapsedTime;
     JLabel runtimeLabel;
 
     // Boolean value for refresh check
     boolean needRefresh = false;
 
-    GUI() {
+    /**
+     * Constructor GUI to set up the UI frame
+     * */
+    protected GUI() {
         // Frame Name / Icon / Size / Exit
         this.setTitle("Sorting Algorithms Visualizer");
-        this.setSize(1000, 650);
+        this.setSize(1200, 830);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(true);
+        this.setResizable(false);
         this.setIconImage(icon.getImage());
 
         //Menu Bar
         menuBar = new JMenuBar();
-        fileMenu = new JMenu("File");
         saveItem = new JMenuItem("Save");
 
         // Title
         label = new JLabel("Sorting Algorithms Visualizer");
-        label.setBounds(235, 0, 400, 60);
+        label.setBounds(255, 0, 400, 60);
         label.setFont(new Font("Arial Rounded MT Bolt", Font.BOLD, 26));
         label.setForeground(Color.white);
 
@@ -78,25 +78,25 @@ public class GUI extends JFrame implements ActionListener /*ChangeListener*/ {
         elapsedTime.setForeground(Color.WHITE);
 
         // Combo Box
-        String[] algorithms = {"Select Algorithm", "Bubble Sort", "Selection Sort", "Insertion Sort", "Quick Sort", "Merge Sort"};
+        String[] algorithms = {"Select Algorithm", "Bubble Sort", "Selection Sort", "Insertion Sort", "Bogo Sort", "Quick Sort"};
         comboBox = new JComboBox(algorithms);
-        comboBox.setBounds(330, 70, 155, 30);
+        comboBox.setBounds(355, 70, 155, 30);
         comboBox.addActionListener(this);
 
         // Start Button / Refresh Button
         start = new JButton("Start");
-        start.setBounds(670, 30, 140, 30);
+        start.setBounds(770, 12, 140, 30);
         start.setFocusable(false);
         start.addActionListener(this);
 
         refresh = new JButton("Refresh");
-        refresh.setBounds(815, 30, 140, 30);
+        refresh.setBounds(915, 12, 140, 30);
         refresh.setFocusable(false);
         refresh.addActionListener(this);
 
         // Align panels
         UpPanel.setBounds(0, 0, 870, 100);
-        graph.setBounds(0, 105, 900, 500);
+        graph.setBounds(0, 130, 1190, 660);
 
         // Background colours
         UpPanel.setBackground(Color.black);
@@ -113,11 +113,6 @@ public class GUI extends JFrame implements ActionListener /*ChangeListener*/ {
         UpPanel.add(newArray.enter);
         UpPanel.setLayout(new BorderLayout());
 
-        // Add MenuBar
-        saveItem.addActionListener(this);
-        fileMenu.add(saveItem);
-        menuBar.add(fileMenu);
-
         this.setLayout(new BorderLayout());
         this.setJMenuBar(menuBar);
         this.add(graph);
@@ -126,8 +121,43 @@ public class GUI extends JFrame implements ActionListener /*ChangeListener*/ {
         this.setVisible(true);
     }
 
+    /**
+     * GUI action performed functions
+     * */
+    String selected = "";
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        //Combobox
+        if (e.getSource() == comboBox) {
+            if (comboBox.getSelectedItem() == "Bubble Sort") {
+                selected = "Bubble";
+                runtimeLabel.setText("Runtime: O(N²)");
+            } else if (comboBox.getSelectedItem() == "Selection Sort") {
+                selected = "Selection";
+                runtimeLabel.setText("Runtime: O(N²)");
+
+            } else if (comboBox.getSelectedItem() == "Insertion Sort") {
+                selected = "Insertion";
+                runtimeLabel.setText("Runtime: O(N²)");
+
+            } else if (comboBox.getSelectedItem() == "Bogo Sort") {
+                selected = "Bogo Sort";
+                runtimeLabel.setText("Runtime: O(n!)");
+
+            } else if (comboBox.getSelectedItem() == "Quick Sort") {
+                selected = "Quick Sort";
+                runtimeLabel.setText("Runtime: O(n logn) ");
+            }
+        }
+
+        //Refresh button status
+        if (e.getSource() == refresh) {
+            array = newArray.createArray();
+            graph.updateArray(array);
+            graph.repaint();
+            needRefresh = false;
+        }
 
         long startTime;
         long endTime;
@@ -142,38 +172,35 @@ public class GUI extends JFrame implements ActionListener /*ChangeListener*/ {
                 try {
                     bubble.runBubbleSort(array, graph, this);
                     System.out.println("Sorting finished");
-
-                    //Elapsed time
-                    endTime = System.currentTimeMillis();
-                    time = (endTime - startTime) / 1000.0;
-                    System.out.println("It took " + time + " seconds to sort");
-                    elapsedTime.setText("Elapsed Time: " + time + "s");
-                    JOptionPane.showMessageDialog(null, "Sorting finished!", "Bubble Sort", JOptionPane.INFORMATION_MESSAGE);
-
                 } catch (InterruptedException err) {
                     err.printStackTrace();
                 }
-
-                //Selection Sort
-            } else if (selected == "Selection") {
-                startTime = System.currentTimeMillis();
-                System.out.println("Selection Sort Selected");
-                try {
-                    selection.executeSelectionSort(array, graph, this);
-                    System.out.println("Sorting finished");
-                } catch (InterruptedException err) {
-                    err.printStackTrace();
-                }
-
                 //Elapsed time
                 endTime = System.currentTimeMillis();
                 time = (endTime - startTime) / 1000.0;
                 System.out.println("It took " + time + " seconds to sort");
                 elapsedTime.setText("Elapsed Time: " + time + "s");
-                JOptionPane.showMessageDialog(null, "Sorting finished!", "Selection Sort", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Sorting finished! \n It took: " + time + " seconds", "Bubble Sort", JOptionPane.INFORMATION_MESSAGE);
+
+                //Selection Sort
+            } else if (selected.equals("Selection")) {
+                startTime = System.currentTimeMillis();
+                System.out.println("Selection Sort Selected");
+                try {
+                    selection.runSelectionSort(array, graph, this);
+                    System.out.println("Sorting finished");
+                } catch (InterruptedException err) {
+                    err.printStackTrace();
+                }
+                //Elapsed time
+                endTime = System.currentTimeMillis();
+                time = (endTime - startTime) / 1000.0;
+                System.out.println("It took " + time + " seconds to sort");
+                elapsedTime.setText("Elapsed Time: " + time + "s");
+                JOptionPane.showMessageDialog(null, "Sorting finished! \n It took: " + time + " seconds", "Selection Sort", JOptionPane.INFORMATION_MESSAGE);
 
                 //Insertion Sort
-            } else if (selected == "Insertion") {
+            } else if (selected.equals("Insertion")) {
                 startTime = System.currentTimeMillis();
                 System.out.println("Insertion Sort Selected");
                 try {
@@ -182,56 +209,43 @@ public class GUI extends JFrame implements ActionListener /*ChangeListener*/ {
                 } catch (InterruptedException err) {
                     err.printStackTrace();
                 }
-
                 //Elapsed time
                 endTime = System.currentTimeMillis();
                 time = (endTime - startTime) / 1000.0;
                 System.out.println("It took " + time + " seconds to sort");
                 elapsedTime.setText("Elapsed Time: " + time + "s");
-                JOptionPane.showMessageDialog(null, "Sorting finished!", "Insertion Sort", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Sorting finished! \n It took: " + time + " seconds", "Insertion Sort", JOptionPane.INFORMATION_MESSAGE);
 
-                //Quick Sort
-            } else if (selected == "Quick") {
+            } else if (selected.equals("Bogo Sort")) {
+                startTime = System.currentTimeMillis();
+                System.out.println("Bogo Sort Selected");
+                try {
+                    bogoSort.runBogoSort(array, graph, this);
+                } catch (InterruptedException err) {
+                    err.printStackTrace();
+                }
+                //Elapsed time
+                endTime = System.currentTimeMillis();
+                time = (endTime - startTime) / 1000.0;
+                System.out.println("It took " + time + " seconds to sort");
+                elapsedTime.setText("Elapsed Time: " + time + "s");
+                JOptionPane.showMessageDialog(null, "Sorting finished! \n It took: " + time + " seconds", "Bogo Sort", JOptionPane.INFORMATION_MESSAGE);
+
+            } else if (selected.equals("Quick Sort")) {
                 startTime = System.currentTimeMillis();
                 System.out.println("Quick Sort Selected");
                 try {
-                    quick.runQuickSort(array, graph, this);
+                    quickSort.runQuickSort(array, graph,this);
                     System.out.println("Sorting finished");
                 } catch (InterruptedException err) {
                     err.printStackTrace();
                 }
-
                 //Elapsed time
                 endTime = System.currentTimeMillis();
                 time = (endTime - startTime) / 1000.0;
                 System.out.println("It took " + time + " seconds to sort");
                 elapsedTime.setText("Elapsed Time: " + time + "s");
-                JOptionPane.showMessageDialog(null, "Sorting finished!", "Quick Sort", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-        //Refresh button status
-        if (e.getSource() == refresh) {
-            array = newArray.createArray();
-            graph.updateArray(array);
-            graph.repaint();
-            needRefresh = false;
-        }
-        //Combobox
-        if (e.getSource() == comboBox) {
-            if (comboBox.getSelectedItem() == "Bubble Sort") {
-                selected = "Bubble";
-                runtimeLabel.setText("Runtime: O(N^2)");
-            } else if (comboBox.getSelectedItem() == "Selection Sort") {
-                selected = "Selection";
-                runtimeLabel.setText("Runtime: O(N^2)");
-
-            } else if (comboBox.getSelectedItem() == "Insertion Sort") {
-                selected = "Insertion";
-                runtimeLabel.setText("Runtime: O(N^2)");
-
-            } else if (comboBox.getSelectedItem() == "Quick Sort") {
-                selected = "Quick";
-                runtimeLabel.setText("Runtime: Nlog(N)");
+                JOptionPane.showMessageDialog(null, "Sorting finished! \n It took: " + time + " seconds", "Quick Sort", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }

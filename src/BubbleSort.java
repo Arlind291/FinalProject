@@ -1,10 +1,13 @@
 import javax.swing.*;
 import java.util.*;
 
+/**
+ *
+ * */
 public class BubbleSort extends JPanel {
     boolean swapped = true;
 
-    public void runBubbleSort(ArrayList<Integer> nums, Graph graph, GUI GUI) throws InterruptedException {
+    public void runBubbleSort(ArrayList<Integer> nums, Graph graph, GUI gui) throws InterruptedException {
         // Start bubble sorting
         while (swapped) {
             swapped = false;
@@ -17,11 +20,11 @@ public class BubbleSort extends JPanel {
                     graph.removeAll();
                     graph.updateArray(nums);
                     graph.revalidate();
-                    graph.paintImmediately(0,30,870,532);;
+                    graph.paintImmediately(0,30,1500,632);
                 }
             }
         }
         swapped = true;
-        GUI.needRefresh = true;
+        //gui.needRefresh = false;
     }
 }

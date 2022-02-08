@@ -1,5 +1,5 @@
-public class Main {
+public class Run {
     public static void main(String[] args){
-        GUI gui = new GUI();
+        new GUI();
     }
 }

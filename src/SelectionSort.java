@@ -1,11 +1,14 @@
 import javax.swing.*;
 import java.util.*;
 
+/**
+ *
+ * */
+
 public class SelectionSort extends JPanel {
 
-    public void executeSelectionSort(ArrayList<Integer> nums, Graph graph, GUI GUI) throws InterruptedException {
+    public void runSelectionSort(ArrayList<Integer> nums, Graph graph, GUI gui) throws InterruptedException {
         int id = 0;
-
         while (id < nums.size() - 1) {
             int lowest = nums.get(id);
             int lowest_idx = id;
@@ -23,8 +26,8 @@ public class SelectionSort extends JPanel {
             graph.removeAll();
             graph.updateArray(nums);
             graph.revalidate();
-            graph.paintImmediately(0,30,870,532);;
+            graph.paintImmediately(0,30,1500,632);;
         }
-        GUI.needRefresh = true;
+        gui.needRefresh = true;
     }
 }

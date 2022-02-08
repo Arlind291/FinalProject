@@ -9,14 +9,11 @@ public class BogoSort extends JPanel {
     public void runBogoSort(ArrayList<Integer> nums, Graph graph, GUI gui) throws InterruptedException {
         Random random = new Random();
         for (int i = 0; i < nums.size(); i++) {
-            nums.add(random.nextInt(nums.size()));
-
-
+            nums.add(random.nextInt(100));
 
             while (!isListSorted(nums)) {
                 Collections.shuffle(nums);
                 System.out.println(nums);
-
 
                 Thread.sleep(10);
                 graph.removeAll();
@@ -24,6 +21,7 @@ public class BogoSort extends JPanel {
                 graph.revalidate();
                 graph.paintImmediately(0, 30, 1500, 632);
             }
+            break;
         }
         gui.needRefresh = true;
     }
